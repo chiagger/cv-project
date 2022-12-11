@@ -1,57 +1,50 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import uniqid from "uniqid";
 import Extrainterest from './addComp/extraaddint.js';
 
 
-class Extraint extends Component {
-    constructor() {
-        super();
+const Extraint = () => {
+    const [interest, setInterest] = useState({ id: uniqid(), desc: "Reading" })
+    const [interestArray, setInterestArray] = useState([])
+    const arrayUpdated = useRef(false);
 
-        this.state = {
-            interest: {
-                id: uniqid(),
-                desc: "Reading",
-
-            },
-            interestArray: [],
-            
+    useEffect(() => {
+        if (arrayUpdated.current) { //to prevent useEffect from running twice
+            return;
         }
-    }
 
-    handleNewInterest = (e) => {
-        e.preventDefault();
-        console.log("Ok")
-        this.setState({
-            interest: {
-                id: this.state.interest.id,
-                desc: "Reading",
-            },
-        });
-        this.setState({
-            interestArray: this.state.interestArray.concat(this.state.interest),
-        });
-    };
+        const handleNewInterest = (e) => {
+            e.preventDefault();
+            setInterest({
+                id: interest.id,
+                desc: "Reading"
+            });
+            setInterestArray(interestArray => [...interestArray, interest]);
+            arrayUpdated.current = true;
+        };
 
- 
-    render() {
-        const { interestArray } = this.state;
+        const newIntBtn = document.getElementById("addExtraInterest");
+        newIntBtn.addEventListener("click", handleNewInterest);
 
-        return (
-            <div id="extra">
-                <div id="skills">
-                    <div id="headingwrap">
-                        <div id="heading">INTERESTS</div>
-                        <button id="addExtraInterest" onClick={this.handleNewInterest}>+</button>
-                    </div>
-                    <Extrainterest interestArray={interestArray}></Extrainterest>
+        return () => {
+            document.removeEventListener("click", handleNewInterest)
+        };
+    }, [interestArray])
 
 
+
+    return (
+        <div id="extra">
+            <div id="skills">
+                <div id="headingwrap">
+                    <div id="heading">INTERESTS</div>
+                    <button id="addExtraInterest">+</button>
                 </div>
-
-
+                <Extrainterest interestArray={interestArray}></Extrainterest>
             </div>
-        )
-    }
+        </div>
+    )
 }
+
 
 export default Extraint

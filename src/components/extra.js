@@ -1,57 +1,47 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import uniqid from "uniqid";
 import ExtraSkill from './addComp/extraAdd';
 
 
-class Extra extends Component {
-    constructor() {
-        super();
+const Extra = () => {
+    const [skill, setSkill] = useState({ id: uniqid(), desc: "Team-working" })
+    const [skillArray, setSkillArray] = useState([])
+    const arrayUpdated = useRef(false);
 
-        this.state = {
-            skill: {
-                id: uniqid(),
-                desc: "Team-working",
-
-            },
-            skillArray: [],
-            
+    useEffect(() => {
+        if (arrayUpdated.current) { //to prevent useEffect from running twice
+            return;
         }
-    }
 
-    handleNewSkill = (e) => {
-        e.preventDefault();
-        this.setState({
-            skill: {
-                id: this.state.skill.id,
+        const handleNewSkill = (e) => {
+            e.preventDefault();
+            setSkill({
+                id: skill.id,
                 desc: "Team-working",
-            },
-        });
-        this.setState({
-            skillArray: this.state.skillArray.concat(this.state.skill),
-        });
-    };
+            });
+            setSkillArray(skillArray => [...skillArray, skill]);
+            arrayUpdated.current = true;
+        }
 
- 
-    render() {
-        const { skillArray } = this.state;
+        const newSkillBtn = document.getElementById("addExtraSkill");
+        newSkillBtn.addEventListener("click", handleNewSkill);
 
-        return (
-            <div id="extra">
+        return () => {
+            document.removeEventListener("click", handleNewSkill)
+        };
+    }, [skillArray])
 
-                <div id="skills">
-                    <div id="headingwrap">
-                        <div id="heading">SKILLS</div>
-                        <button id="addExtraSkill" onClick={this.handleNewSkill}>+</button>
-                    </div>
-
-                    <ExtraSkill skillArray={skillArray}></ExtraSkill>
-
+    return (
+        <div id="extra">
+            <div id="skills">
+                <div id="headingwrap">
+                    <div id="heading">SKILLS</div>
+                    <button id="addExtraSkill">+</button>
                 </div>
-
-                
+                <ExtraSkill skillArray={skillArray}></ExtraSkill>
             </div>
-        )
-    }
-}
+        </div>
+    )
+};
 
 export default Extra

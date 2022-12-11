@@ -1,61 +1,55 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EducationComp from './addComp/educationAdd';
 import uniqid from "uniqid";
 
 
-class Education extends Component {
-    constructor() {
-        super();
+const Education = () => {
+    const [edu, setEdu] = useState({
+        id: uniqid(), title: "University of London", desc: "Bachelors's in Software Engineering",
+        since: "2017",
+        to: '2020',
+        where: 'London, UK'
+    })
+    const [eduArray, setEduArray] = useState([])
+    const arrayUpdated = useRef(false);
 
-        this.state = {
-            edu: {
-                id: uniqid(),
-                title: 'University of London',
-                desc: "Bachelors's in Software Engineering",
-                since: "2017",
-                to: '2020',
-                where: 'London, UK'
-            },
-            eduArray: [],
+    useEffect(() => {
+        if (arrayUpdated.current) { //to prevent useEffect from running twice
+            return;
         }
-    }
 
-    handleNewEdu = (e) => {
-        e.preventDefault();
-        this.setState({
-            edu: {
-                id: this.state.edu.id,
+        const handleNewEdu = (e) => {
+            e.preventDefault();
+            setEdu({
+                id: edu.id,
                 title: 'University of London',
                 desc: "Bachelors's in Software Engineering",
                 since: "2017",
                 to: '2020',
                 where: "London, UK"
-            },
-        });
-        this.setState({
-            eduArray: this.state.eduArray.concat(this.state.edu),
-        });
-    };
+            });
+            setEduArray(eduArray => [...eduArray, edu]);
+            arrayUpdated.current = true;
+        };
+        const newEduBtn = document.getElementById("addEdu");
+        newEduBtn.addEventListener("click", handleNewEdu);
 
-    render() {
-        const { eduArray } = this.state;
+        return () => {
+            document.removeEventListener("click", handleNewEdu)
+        };
+    }, [edu, eduArray])
 
-        return (
-            <div id="education">
-                <div id="headingwrap">
-                    <div id="heading">EDUCATION</div>
-                    <button id="addExp" onClick={this.handleNewEdu}>+</button>
-                </div>
 
-                <EducationComp eduArray={eduArray}></EducationComp>
-
+    return (
+        <div id="education" >
+            <div id="headingwrap">
+                <div id="heading">EDUCATION</div>
+                <button id="addEdu">+</button>
             </div>
-        )
-    }
-
-
+            <EducationComp eduArray={eduArray}></EducationComp>
+        </div >
+    )
 }
 
-
-
 export default Education
+
