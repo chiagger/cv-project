@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import EducationComp from './addComp/educationAdd';
 import uniqid from "uniqid";
 
-
 class Education extends Component {
     constructor() {
         super();
@@ -24,7 +23,7 @@ class Education extends Component {
         e.preventDefault();
         this.setState({
             edu: {
-                id: this.state.edu.id,
+                id: edu.id,
                 title: 'University of London',
                 desc: "Bachelors's in Software Engineering",
                 since: "2017",
